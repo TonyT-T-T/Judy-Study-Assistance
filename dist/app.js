@@ -6,7 +6,7 @@ let store={notes:[],settings:{grade:'初一',edition:''},events:[]},storageOk=tr
 try{const old=JSON.parse(localStorage.getItem(KEY)||'null');if(old&&Array.isArray(old.notes)&&Array.isArray(old.events))store={...store,...old};}catch{storageOk=false;}
 let selected=null,current=null,editing=null,objectUrl=null,uploaded=null,chat=[],session={aiEnabled:false,realDataEnabled:false},pendingDraft=null;
 const sampleHashes=new Map(),fileReaders=[];
-function toast(msg){$('toast').textContent=msg;$('toast').classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').classList.remove('visible'),3500);}
+function toast(msg){$('toast').textContent=msg;$('toast').classList.add('visible');clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast')?.classList.remove('visible'),3500);}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(store));return true;}catch{storageOk=false;toast('浏览器存储不可用或已满，请导出备份；此次修改未保存。');return false;}}
 function event(type,noteId){store.events.push({type,noteId,at:new Date().toISOString()});if(store.events.length>3000)store.events=store.events.slice(-3000);}
 function math(el=document){if(window.renderMathInElement)window.renderMathInElement(el,{delimiters:[{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false},{left:'$$',right:'$$',display:true}],throwOnError:false,trust:false});}
