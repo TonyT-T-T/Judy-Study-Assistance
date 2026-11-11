@@ -29,12 +29,36 @@ const moreTopics=[
 ];
 for(const [id,name,group,keywords,learn] of moreTopics)topicRules.push({id,name,group,keywords,learn,search:'七年级 数学 '+name,reason:'先确认题目条件，再回看“'+learn[0]+'”。'});
 for(const t of topicRules)if(!t.group)t.group=['work','kit'].includes(t.id)?'方程应用':t.id==='number'?'数与运算':t.id==='equation'?'整式与方程':'图形与几何';
+for(const t of topicRules)t.grades=['初一'];
+const laterTopics=[
+ ['polynomialMultiply','整式乘除与乘法公式','初二','数与代数',['整式乘除','平方差','完全平方'],['乘法公式的结构','整式乘除的运算法则']],
+ ['factor','因式分解','初二','数与代数',['因式分解','提公因式','公式法'],['乘法与因式分解的互逆关系','先提公因式再用公式']],
+ ['fraction','分式与分式方程','初二','数与代数',['分式','增根','最简公分母'],['分式有意义的条件','去分母后的验根']],
+ ['radical','二次根式','初二','数与代数',['二次根式','根号','最简二次根式'],['被开方数与非负性','根式运算']],
+ ['linearFunction','一次函数','初二','函数与坐标',['一次函数','正比例函数','斜率'],['函数关系与图像','一次函数的图像性质']],
+ ['triangle','三角形基础','初二','图形与几何',['三角形','三边关系','内角和'],['三边关系与内角和','三角形中的重要线段']],
+ ['congruent','全等三角形','初二','图形与几何',['全等','SAS','ASA','SSS'],['对应边和对应角','全等判定与证明']],
+ ['symmetry','轴对称与等腰三角形','初二','图形与几何',['轴对称','等腰','等边','垂直平分线'],['对称关系','等腰三角形的性质和判定']],
+ ['pythagoras','勾股定理','初二','图形与几何',['勾股','直角三角形三边'],['直角三角形的三边关系','勾股定理与逆定理']],
+ ['quadrilateral','平行四边形与特殊四边形','初二','图形与几何',['平行四边形','矩形','菱形','正方形'],['边、角、对角线性质','特殊四边形的判定']],
+ ['dataAnalysis','平均数、中位数与方差','初二','统计与概率',['平均数','中位数','众数','方差'],['集中趋势与波动程度','结合数据背景解释统计量']],
+ ['quadraticEquation','一元二次方程','初三','数与代数',['一元二次','求根公式','判别式','配方法'],['选择合适的解法','根的实际意义与检验']],
+ ['quadraticFunction','二次函数','初三','函数与坐标',['二次函数','抛物线','顶点','对称轴'],['解析式与图像的联系','最值及实际问题']],
+ ['inverse','反比例函数','初三','函数与坐标',['反比例','双曲线'],['反比例关系与图像','结合实际范围解读结果']],
+ ['rotation','旋转与中心对称','初三','图形与几何',['旋转','中心对称'],['对应点与旋转角','旋转前后的不变量']],
+ ['similar','相似三角形','初三','图形与几何',['相似','位似','比例线段'],['对应关系和相似比','长度、面积比例的区别']],
+ ['trigonometry','锐角三角函数','初三','图形与几何',['正弦','余弦','正切','sin','cos','tan'],['三角比与边角关系','解直角三角形']],
+ ['circle','圆与圆的相关性质','初三','图形与几何',['圆周角','切线','弧长','扇形','圆心角'],['圆中角与弦的关系','切线及弧长面积']],
+ ['probability','概率初步','初三','统计与概率',['概率','随机事件','树状图','列表法'],['等可能事件与样本空间','用列表或树状图求概率']],
+ ['projection','投影与视图','初三','图形与几何',['投影','主视图','左视图','俯视图'],['从不同方向观察物体','视图与实际几何体']]
+];
+for(const [id,name,grade,group,keywords,learn] of laterTopics)topicRules.push({id,name,grades:[grade],group,keywords,learn,search:(grade==='初二'?'八年级':'九年级')+' 数学 '+name,reason:'先核对条件，再补牢“'+learn[0]+'”；学习阶段为候选分类，不代替具体教材目录。'});
 export function inferTopics(item){
  if(!item)return [];
  const known=topicRules.find(t=>t.id===item.id&&!item.live);
  if(known)return [{...known,basis:'原创样题的已标注知识点',confirmed:true}];
  const text=[item.question,item.topic,item.chapter].filter(v=>typeof v==='string').join(' ');
- const matches=topicRules.filter(t=>t.keywords.some(k=>text.includes(k))).map(t=>({...t,basis:'关键词候选：'+t.keywords.filter(k=>text.includes(k)).join('、'),confirmed:false}));
+ const matches=topicRules.filter(t=>t.keywords.some(k=>text.includes(k))&&!(t.id==='equation'&&/二次|二元|分式/.test(text))).map(t=>({...t,basis:'关键词候选：'+t.keywords.filter(k=>text.includes(k)).join('、'),confirmed:false}));
  if(!matches.some(t=>['equation','system','inequality'].includes(t.id))&&/[=＝]/.test(text)&&/[xyz]/i.test(text)&&!/[²³^]|二次|分式/.test(text)){const t=topicRules.find(t=>t.id==='equation');matches.push({...t,basis:'式子中有字母与等号，方程类型需人工核对',confirmed:false});}
  return matches.slice(0,3);
 }

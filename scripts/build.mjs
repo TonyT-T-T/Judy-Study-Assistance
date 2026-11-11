@@ -1,6 +1,9 @@
 import {readFile,writeFile,mkdir,readdir,cp} from 'node:fs/promises';
 import path from 'node:path';
 const root=path.resolve(import.meta.dirname,'..');
+await mkdir(root+'/dist/vendor',{recursive:true});
+await cp(root+'/node_modules/ts-fsrs/dist/index.mjs',root+'/dist/vendor/ts-fsrs.js');
+await cp(root+'/node_modules/ts-fsrs/LICENSE',root+'/dist/vendor/ts-fsrs-LICENSE.txt');
 await mkdir(root+'/dist/katex',{recursive:true});
 await cp(root+'/node_modules/katex/dist/katex.min.css',root+'/dist/katex/katex.min.css');
 await cp(root+'/node_modules/katex/dist/katex.min.js',root+'/dist/katex/katex.min.js');
@@ -10,7 +13,8 @@ const types={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8'
 const assets={};
 async function walk(dir,prefix=''){for(const f of await readdir(dir,{withFileTypes:true})){if(f.name==='server'||f.name==='.openai')continue;const rel=prefix+'/'+f.name;if(f.isDirectory())await walk(path.join(dir,f.name),rel);else{const bytes=await readFile(path.join(dir,f.name));assets[rel]={type:types[path.extname(f.name)]||'application/octet-stream',body:bytes.toString('base64')};}}}
 await walk(root+'/dist');
-const server=await readFile(root+'/worker/api.js','utf8');
+const profileSource=(await readFile(root+'/dist/learning-profile.js','utf8')).replace(/export /g,'');
+const server=profileSource+'\n'+(await readFile(root+'/worker/api.js','utf8')).replace("import {profileContext} from '../dist/learning-profile.js';",'');
 const entry=server+'\nconst ASSETS='+JSON.stringify(assets)+';\nexport default {async fetch(request,env){const url=new URL(request.url);if(url.pathname.startsWith("/api/"))return handleApi(request,env);const asset=ASSETS[url.pathname==="/" ? "/index.html":url.pathname];if(!asset)return new Response("Not found",{status:404});const raw=Uint8Array.from(atob(asset.body),c=>c.charCodeAt(0));return new Response(raw,{headers:{"Content-Type":asset.type,"Cache-Control":"no-cache","X-Content-Type-Options":"nosniff","Referrer-Policy":"same-origin","Permissions-Policy":"camera=(self)","Content-Security-Policy":"default-src \'self\'; script-src \'self\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' blob: data:; font-src \'self\'; connect-src \'self\'; object-src \'none\'; base-uri \'self\'; frame-ancestors \'self\' https://chatgpt.com https://*.chatgpt.com;"}})}};\n';
 await mkdir(root+'/dist/server',{recursive:true});await writeFile(root+'/dist/server/index.js',entry);
 await mkdir(root+'/dist/.openai',{recursive:true});await cp(root+'/.openai/hosting.json',root+'/dist/.openai/hosting.json');
