@@ -1,0 +1,18 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {handleApi,roleFor,validateLesson} from '../worker/api.js';
+import {samples,graph} from '../dist/samples.js';
+const env={PARENT_USER_IDS:'parent-1',STUDENT_USER_IDS:'student-1',FAMILY_ACCESS_VERIFIED:'true'};
+const req=(route,body,id,origin='https://family.test')=>new Request('https://family.test/api/'+route,{method:'POST',headers:{Origin:origin,'Content-Type':'application/json',...(id?{'oai-authenticated-user-id':id}:{})},body:JSON.stringify(body)});
+test('unknown user cannot submit a real image or question',async()=>{const r=await handleApi(req('teach',{question:'synth'},'unknown'),env);assert.equal(r.status,403);assert.equal((await r.json()).code,'FAMILY_NOT_CONFIGURED');});
+test('student cannot read parent configuration',async()=>{const r=await handleApi(new Request('https://family.test/api/parent/status',{headers:{'oai-authenticated-user-id':'student-1'}}),env);assert.equal(r.status,403);});
+test('parent can inspect non-secret service status',async()=>{const r=await handleApi(new Request('https://family.test/api/parent/status',{headers:{'oai-authenticated-user-id':'parent-1'}}),{...env,AI_API_KEY:'test-only-not-a-real-key'});assert.equal(r.status,200);assert.equal((await r.text()).includes('test-only'),false);});
+test('verification flag blocks both configured roles',async()=>{for(const id of ['parent-1','student-1']){const r=await handleApi(req('recognize',{image:'data:image/png;base64,AAAA'},id),{...env,FAMILY_ACCESS_VERIFIED:'false'});assert.equal((await r.json()).code,'ACCESS_NOT_VERIFIED');}});
+test('missing model key produces explicit unavailable response',async()=>{const r=await handleApi(req('teach',{question:'synth'},'student-1'),env);assert.equal(r.status,503);assert.equal((await r.json()).code,'AI_NOT_CONFIGURED');});
+test('cross-origin requests rejected before model work',async()=>{const r=await handleApi(req('teach',{},'parent-1','https://other.test'),env);assert.equal(r.status,403);assert.equal((await r.json()).code,'BAD_ORIGIN');});
+test('client role declarations do not authorize access',()=>{assert.equal(roleFor(new Request('https://family.test',{headers:{'X-Role':'parent'}}),env),null);});
+test('unauthenticated session exposes no parent config',async()=>{const r=await handleApi(new Request('https://family.test/api/session'),env);const v=await r.json();assert.equal(v.role,null);assert.equal(v.config,undefined);assert.equal(v.aiEnabled,false);});
+test('malformed lesson rejected; untrusted diagram removed',()=>{assert.throws(()=>validateLesson({}),/MODEL_SCHEMA/);const lesson=validateLesson({...samples[0],diagram:{type:'svg',html:'<script>'}});assert.equal(lesson.diagram,null);assert.equal(lesson.live,true);});
+test('synthetic relations and variation answers remain mathematically consistent',()=>{assert.equal(samples[0].diagram.b-samples[0].diagram.a,5);assert.equal((samples[1].diagram.ab-samples[1].diagram.ac)/2,3.5);assert.equal(1/(1/6+1/12),4);assert.equal(6*(21-samples[3].variantAnswer),2*4*samples[3].variantAnswer);assert.equal(Number.isInteger(120/14),false);});
+test('SVGs use bounded structured values and contain accessible titles',()=>{for(const s of samples){const svg=graph(s.diagram);assert.match(svg,/<title>/);assert.doesNotMatch(svg,/<script|onload|foreignObject/);}});
+test('large body rejected before parsing',async()=>{const r=await handleApi(new Request('https://family.test/api/recognize',{method:'POST',headers:{Origin:'https://family.test','oai-authenticated-user-id':'parent-1','Content-Length':'9000000'},body:'{}'}),{...env,AI_API_KEY:'not-real'});assert.equal(r.status,413);});

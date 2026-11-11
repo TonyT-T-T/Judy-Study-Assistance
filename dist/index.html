@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Judy 的学习小屋 · 每一道错题，都是进步的起点</title>
+<meta name="description" content="Judy 专属的初中学习空间。整理错题、体验老师的分层讲解、记录思考并安排复习。">
+<link rel="stylesheet" href="style.css">
+<link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#24664e">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+</head>
+<body>
+<aside class="sidebar">
+ <a class="brand" href="#home"><span class="brand-mark">j<span>✦</span></span><span>Judy 的<br><strong>学习小屋</strong></span></a>
+ <div class="workspace-label">MY LEARNING SPACE</div>
+ <nav aria-label="主导航">
+ <button class="nav active" data-view="home"><span>⌂</span>学习桌</button>
+ <button class="nav" data-view="notebook"><span>▤</span>我的错题本 <b id="note-count">0</b></button>
+ <button class="nav" data-view="review"><span>◷</span>复习计划</button>
+ <button class="nav" data-view="insights"><span>▥</span>学习小结</button>
+ </nav>
+ <div class="side-note"><span class="tiny-star">✧</span><p>不着急，慢慢来。<br>真正弄懂，比做完更重要。</p><small>给努力中的 Judy</small></div>
+ <button id="settings" class="profile"><span class="avatar">J</span><span><strong>Judy</strong><small id="profile-grade">初中 · 自主学习</small></span><span>⚙</span></button>
+</aside>
+<div class="main-wrap">
+<header><span id="breadcrumb">我的学习空间 <i>/</i> 学习桌</span><div><span class="status-dot"></span>个人学习空间 <span class="header-avatar">J</span></div></header>
+<main>
+<section id="home" class="view">
+ <div class="greeting"><div><div class="eyebrow">A LITTLE PROGRESS, EVERY DAY</div><h1>嗨，Judy。今天也一起进步吧<span class="sun">✺</span></h1><p>把不会的题放在这里，我们一步一步，把它弄懂。</p></div><span id="today" class="date"></span></div>
+ <div class="hero">
+ <div class="hero-copy"><span class="pill">你的专属学习陪伴</span><h2>错题不可怕，<br>每一次弄懂都算数。</h2><p>先找卡住的地方，再拆解解题思路。<br>带着一点点提示，自己走到答案。</p><button id="try-demo" class="light-button">体验老师讲题 <span>↗</span></button><small>初中数学 · 一元一次方程示例</small></div>
+ <div class="hero-art" aria-hidden="true"><span class="spark s1">✧</span><span class="spark s2">✦</span><span class="orbit">× ÷ +</span><div class="paper back"></div><div class="paper front"><span class="paper-title">TODAY'S LITTLE DISCOVERY</span><div class="equation">2(x + 3) = 14</div><div class="paper-line"></div><div class="pencil-line">先想一想，括号怎么打开？</div><div class="mini-equation">2x + 6 = 14</div><span class="check">✓</span></div><div class="sticker">Aha!<span>我明白啦</span></div><div class="pencil"></div></div>
+ </div>
+ <div class="work-grid">
+ <section class="card input-card"><div class="card-heading"><div><span class="eyebrow">LET'S FIGURE IT OUT</span><h2>今天，哪道题难住你了？</h2></div><span class="step-tag">01 / 整理题目</span></div>
+ <div class="mode-tabs"><button class="selected" id="text-tab" role="tab" aria-selected="true">✎ 输入题目</button><button id="photo-tab" role="tab" aria-selected="false">▧ 上传照片</button></div>
+ <form id="question-form">
+ <div class="form-row"><label>学科<select id="subject"><option>数学</option><option>英语</option><option>语文</option><option>物理</option><option>化学</option><option>生物</option><option>历史</option><option>地理</option><option>道德与法治</option></select></label><label>年级<select id="grade"><option>初一</option><option>初二</option><option>初三</option></select></label><label>教材<input id="edition" placeholder="如：人教版" maxlength="40"></label></div>
+ <div id="photo-panel" hidden><label class="upload" for="photo"><span>↥</span><strong>点击选择一张题目照片</strong><small>JPG、PNG、WEBP · 最大 5 MB</small></label><input id="photo" type="file" accept="image/jpeg,image/png,image/webp" hidden><div id="image-wrap" hidden><img id="image-preview" alt="已选择的题目照片"><button type="button" id="remove-photo">移除照片 ×</button></div><p class="field-note">照片仅在当前页面预览；暂不支持自动识别。请补充题目文字，或将原图附到 ChatGPT。</p></div>
+ <label class="field-label" for="question">题目内容 <span>尽量保留完整条件和问题</span></label><textarea id="question" rows="4" maxlength="6000" placeholder="把题目粘贴在这里，例如：解方程 2(x + 3) = 14。"></textarea>
+ <label class="field-label" for="attempt">我的解题过程 / 卡住的地方 <span>选填，但能帮助老师更懂你</span></label><textarea id="attempt" rows="2" maxlength="3000" placeholder="我做到哪一步了？为什么这样想？"></textarea>
+ <div class="input-footer"><span>✧ 先思考一下，也是一种进步</span><button class="primary" type="submit">生成老师提问稿 <span>→</span></button></div>
+ </form>
+ <div class="connection-note"><span>○</span><p><strong>AI 解题尚未连接</strong>当前可整理错题并生成专属提问稿，复制到 ChatGPT 后获取讲解。示例讲解为预设内容。</p></div>
+ </section>
+ <aside class="right-stack"><section class="card teacher-note"><div class="teacher-icon">✦</div><span class="eyebrow">A NOTE FROM YOUR TEACHER</span><h3>先别急着看答案。</h3><p>Judy，试着告诉我：<br>“这道题给了什么条件？<br>它想让我们求什么？”</p><p>找到这两件事，<br>你就已经迈出了第一步。</p><div class="note-sign">陪你一起想明白 <span>↗</span></div></section>
+ <section class="card review-mini"><span class="eyebrow">SMALL STEPS MATTER</span><h3>今天的小目标</h3><div class="goal"><span>01</span><p>弄懂一道错题<small>说出“我为什么会错”</small></p></div><div class="goal"><span>02</span><p>独立再做一遍<small>合上答案，才是真的会了</small></p></div><button class="text-button" data-go="review">看看我的复习计划 →</button></section></aside>
+ </div>
+ <section class="learning-path"><div><span class="eyebrow">HOW WE LEARN</span><h3>从“不会”到“我会了”，只差几小步。</h3></div><div class="path-steps"><span><b>1</b>讲出思路</span><i>→</i><span><b>2</b>获得提示</span><i>→</i><span><b>3</b>理解错因</span><i>→</i><span><b>4</b>独立重做</span></div></section>
+</section>
+<section id="notebook" class="view" hidden><div class="page-heading"><span class="eyebrow">MY MISTAKE NOTEBOOK</span><h1>每一道错题，都有收获。</h1><p>记录题目，更要记住你的思考。内容保存在当前浏览器。</p></div><div class="filter-row"><input id="search" placeholder="搜索题目或我的反思" aria-label="搜索错题"><select id="filter-subject" aria-label="按学科筛选"><option>全部学科</option><option>数学</option><option>英语</option><option>语文</option><option>物理</option><option>化学</option><option>生物</option><option>历史</option><option>地理</option><option>道德与法治</option></select><button id="export" class="secondary">导出错题本</button><button class="primary" data-go="home">＋ 添加错题</button></div><div id="notes-list"></div></section>
+<section id="review" class="view" hidden><div class="page-heading"><span class="eyebrow">A LITTLE REVIEW GOES A LONG WAY</span><h1>再想一遍，记得更牢。</h1><p>按 1、3、7 天的间隔回来重做。先独立作答，再核对讲解。</p></div><div id="review-list"></div></section>
+<section id="insights" class="view" hidden><div class="page-heading"><span class="eyebrow">YOUR LEARNING REFLECTION</span><h1>看见自己的小小进步。</h1><p>从真实的错题记录里，找到下一步值得练习的地方。</p></div><div class="stats" id="stats"></div><div class="card summary-card"><h2>这段时间，重点关注什么？</h2><div id="summary"></div><p class="field-note">这里统计你手动标记的错因与复习记录，不是 AI 自动诊断。</p></div></section>
+<footer>MADE FOR JUDY <span>✧</span> 每天懂一点，慢慢走很远。<small>数据仅存于本机浏览器 · 可在错题本导出备份</small></footer>
+</main>
+</div>
+<dialog id="demo-dialog"><div class="dialog-top"><span class="eyebrow">跟老师一起想一想</span><button class="close" aria-label="关闭">×</button></div><div class="demo-label">预设教学示例 · 不代表已分析你的题目</div><h2>解方程：2(x + 3) = 14</h2><div class="student-work">假设 Judy 的做法：2x + 3 = 14 → x = 5.5</div><p class="teacher-voice">Judy，你已经知道要去括号，这个方向是对的。我们一起看看，括号外的 2 应该和谁相乘？</p><div class="hint-box"><span>关键提示</span><p>把 (x + 3) 看成一个整体：买 2 份“x + 3”，x 和 3 都有两份。</p></div><details><summary>提示一 · 我再想一想</summary><p>乘法分配律：a(b + c) = ab + ac。所以 2(x + 3) = 2x + 6，不能漏乘常数项。</p></details><details><summary>提示二 · 下一步怎么走？</summary><p>得到 2x + 6 = 14 后，等式两边同时减去 6。试着自己求出 2x，再求 x。</p></details><details><summary>完整解答 · 思考后再展开</summary><div class="solution">① 去括号：2x + 6 = 14<br>② 两边同时减 6：2x = 8<br>③ 两边同时除以 2：x = 4<br>④ 代回检验：2 × (4 + 3) = 14，成立。</div><p><strong>错因：</strong>使用乘法分配律时漏乘了括号中的 3。<br><strong>记住一句：</strong>括号外的数，要乘到括号里的每一项。</p></details><div class="practice"><span class="eyebrow">轮到你试试</span><h3>解方程：3(x − 2) = 15</h3><label for="practice-answer">x = </label><input id="practice-answer" type="number" placeholder="你的答案"><button id="check-practice" class="secondary">检查答案</button><p id="practice-feedback" role="status"></p></div><button class="primary full" id="save-demo">把这道示例加入错题本</button></dialog>
+<dialog id="prompt-dialog"><div class="dialog-top"><span class="eyebrow">专属老师提问稿</span><button class="close" aria-label="关闭">×</button></div><h2>让老师从你的思路开始讲。</h2><p>复制下面的提问稿到 ChatGPT。若使用照片，请同时附上原图；网页不会自动转交照片。</p><textarea id="prompt-output" rows="13" readonly aria-label="可复制的老师提问稿"></textarea><div class="dialog-actions"><button id="copy-prompt" class="primary">复制提问稿</button><a class="secondary" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">打开 ChatGPT ↗</a><button id="save-draft" class="secondary">存入错题本</button></div></dialog>
+<dialog id="note-dialog"><div class="dialog-top"><span class="eyebrow">把理解留下来</span><button class="close" aria-label="关闭">×</button></div><h2 id="detail-title"></h2><p id="detail-attempt" class="student-work"></p><label class="field-label" for="cause">这次主要卡在哪里？</label><select id="cause"><option>尚未归因</option><option>概念不清</option><option>审题遗漏</option><option>思路卡住</option><option>计算或书写错误</option><option>知识记忆不牢</option></select><label class="field-label" for="reflection">我的一句话总结</label><textarea id="reflection" rows="3" maxlength="3000" placeholder="下次遇到这种题，我要先……"></textarea><label class="field-label" for="teacher-answer">老师的解答 / 从 ChatGPT 粘贴的讲解</label><textarea id="teacher-answer" rows="6" maxlength="20000" placeholder="把完整讲解保存到这里，方便以后核对。"></textarea><div class="dialog-actions"><button id="save-reflection" class="primary">保存理解</button><button id="delete-note" class="danger">删除这道题</button></div></dialog>
+<dialog id="settings-dialog"><div class="dialog-top"><span class="eyebrow">JUDY'S PROFILE</span><button class="close" aria-label="关闭">×</button></div><h2>我的学习设置</h2><label class="field-label" for="settings-grade">默认年级</label><select id="settings-grade"><option>初一</option><option>初二</option><option>初三</option></select><label class="field-label" for="settings-edition">教材版本</label><input id="settings-edition" placeholder="如：人教版" maxlength="40"><p class="field-note">无需填写姓名、学校或联系方式。设置和错题保存在当前浏览器，不会跨设备同步。</p><button id="save-settings" class="primary">保存设置</button></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="/katex/katex.min.js"></script><script src="/katex/auto-render.min.js"></script>
+<script type="module" src="app.js"></script>
+</body></html>

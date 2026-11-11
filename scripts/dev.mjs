@@ -1,0 +1,9 @@
+import http from 'node:http';
+import {readFile} from 'node:fs/promises';
+import path from 'node:path';
+import {handleApi} from '../worker/api.js';
+const base=path.resolve(import.meta.dirname,'../dist');
+const portIndex=process.argv.indexOf('--port');
+const port=Number(portIndex>=0?process.argv[portIndex+1]:(process.env.PORT||3000));
+const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.json':'application/json','.webmanifest':'application/manifest+json','.woff2':'font/woff2','.woff':'font/woff','.ttf':'font/ttf'};
+http.createServer(async(req,res)=>{try{const host=req.headers['x-forwarded-host']||req.headers.host;const proto=req.headers['x-forwarded-proto']||'http';const url=new URL(req.url,proto+'://'+host);if(url.pathname.startsWith('/api/')){const chunks=[];let size=0;for await(const c of req){size+=c.length;if(size>8e6){res.writeHead(413);return res.end('Too large');}chunks.push(c);}const request=new Request(url,{method:req.method,headers:req.headers,...(req.method==='GET'?{}:{body:Buffer.concat(chunks)})});const response=await handleApi(request,{});res.writeHead(response.status,Object.fromEntries(response.headers));return res.end(await response.text());}const rel=decodeURIComponent(url.pathname==='/'?'/index.html':url.pathname);const file=path.resolve(base,'.'+rel);if(!file.startsWith(base+'/')||rel.includes('/server/')||rel.includes('/.openai/')){res.writeHead(404);return res.end('Not found');}const bytes=await readFile(file);res.writeHead(200,{'Content-Type':mime[path.extname(file)]||'application/octet-stream','Cache-Control':'no-store'});res.end(bytes);}catch{res.writeHead(404);res.end('Not found');}}).listen(port,'0.0.0.0',()=>console.log('Judy Math AI dev listening on '+port));
