@@ -1,0 +1,39 @@
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: standalone/Dockerfile
+    restart: unless-stopped
+    environment:
+      PUBLIC_ORIGIN: https://${JUDY_DOMAIN:?Set your own domain}
+      FAMILY_SETUP_TOKEN: ${FAMILY_SETUP_TOKEN:?Generate a private setup code}
+      FAMILY_ACCESS_VERIFIED: "false"
+    volumes:
+      - judy_data:/app/data
+    expose:
+      - "3000"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+  web:
+    image: caddy:2
+    restart: unless-stopped
+    environment:
+      JUDY_DOMAIN: ${JUDY_DOMAIN:?Set your own domain}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+volumes:
+  judy_data:
+  caddy_data:
+  caddy_config:
